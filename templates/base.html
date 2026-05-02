@@ -116,57 +116,147 @@
             border-top: 1px solid var(--border);
         }
 
+        #flash-container {
+            position: fixed;
+            bottom: 30px;
+            /* Moved to bottom */
+            right: 30px;
+            /* Moved to right */
+            z-index: 9999;
+            width: 100%;
+            max-width: 320px;
+            display: flex;
+            flex-direction: column;
+            gap: 12px;
+        }
+
+        .flash-message {
+            background: rgba(0, 0, 0, 0.85);
+            /* Slick dark glass */
+            backdrop-filter: blur(10px);
+            color: #fff;
+            padding: 1rem 1.2rem;
+            border-radius: 12px;
+            /* Smooth iOS-style corners */
+            font-size: 0.85rem;
+            font-weight: 500;
+            line-height: 1.4;
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.2);
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            animation: slideInRight 0.5s cubic-bezier(0.175, 0.885, 0.32, 1.275) forwards;
+        }
+
+        /* Success style */
+        .flash-message.success {
+            background: rgba(0, 0, 0, 0.9);
+            /* Pure black for success */
+        }
+
+        /* Error style */
+        .flash-message.error {
+            background: rgba(255, 59, 48, 0.9);
+            /* iOS Red with transparency */
+        }
+
+        @keyframes slideInRight {
+            0% {
+                opacity: 0;
+                transform: translateX(50px) scale(0.9);
+            }
+
+            100% {
+                opacity: 1;
+                transform: translateX(0) scale(1);
+            }
+        }
+
+        @keyframes fadeOut {
+            from {
+                opacity: 1;
+                transform: translateY(0);
+            }
+
+            to {
+                opacity: 0;
+                transform: translateY(10px);
+            }
+        }
+
         /* Fixed Jinja blocks here */
     </style>
     {% block extra_css %}{% endblock %}
 </head>
 
 <body>
-    <div class="banner">
-        Verified Listings: Now manually reviewing every Real Estate post for your safety.
-    </div>
 
-    <nav>
-        <a href="/" class="brand">ADSRWANDA.</a>
+    <body>
+        <!-- Flash Messages Logic -->
+        {% with messages = get_flashed_messages(with_categories=true) %}
+        {% if messages %}
+        <div id="flash-container">
+            {% for category, message in messages %}
+            <div class="flash-message {{ category }}">{{ message }}</div>
+            {% endfor %}
+        </div>
+        {% endif %}
+        {% endwith %}
 
-        <div class="nav-center">
-            <a href="/real-estate" class="nav-link">Real Estate</a>
-            <a href="/automotive" class="nav-link">Automotive</a>
-            <a href="/electronics" class="nav-link">Electronics</a>
-            <!-- Added back as requested -->
-            <a href="/jobsntenders" class="nav-link">Jobs & Tenders</a>
+        <div class="banner">
+            Verified Listings: Now manually reviewing every Real Estate post for your safety.
         </div>
 
-        <div class="nav-right">
-            <a href="/post" class="post-ad-btn">Submit Listing</a>
-            {% if session.get('user_id') %}
-            <a href="/dashboard" class="auth-link">Dashboard</a>
-            <a href="/logout" class="nav-link" style="font-size: 0.75rem; margin-left: 10px;">Sign Out</a>
-            {% else %}
-            <a href="/auth" class="auth-link">
-                <svg class="user-icon" viewBox="0 0 24 24">
-                    <path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"></path>
-                    <circle cx="12" cy="7" r="4"></circle>
-                </svg>
-                Sign In
-            </a>
-            {% endif %}
-        </div>
-    </nav>
+        <nav>
+            <a href="/" class="brand">ADSRWANDA.</a>
 
-    <div class="container">
-        {% block content %}{% endblock %}
-
-        <footer>
-            <div style="display: flex; justify-content: space-between; align-items: center;">
-                <span style="font-size: 0.8rem; color: var(--muted);">© 2026 AdsRwanda.</span>
-                <div style="display: flex; gap: 1.5rem;">
-                    <a href="#" class="nav-link">Terms</a>
-                    <a href="#" class="nav-link">Privacy</a>
-                </div>
+            <div class="nav-center">
+                <a href="/real-estate" class="nav-link">Real Estate</a>
+                <a href="/automotive" class="nav-link">Automotive</a>
+                <a href="/electronics" class="nav-link">Electronics</a>
+                <!-- Added back as requested -->
+                <a href="/jobsntenders" class="nav-link">Jobs & Tenders</a>
             </div>
-        </footer>
-    </div>
-</body>
+
+            <div class="nav-right">
+                <a href="/post" class="post-ad-btn">Submit Listing</a>
+                {% if session.get('user_id') %}
+                <a href="/dashboard" class="auth-link">Dashboard</a>
+                <a href="/logout" class="nav-link" style="font-size: 0.75rem; margin-left: 10px;">Sign Out</a>
+                {% else %}
+                <a href="/auth" class="auth-link">
+                    <svg class="user-icon" viewBox="0 0 24 24">
+                        <path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"></path>
+                        <circle cx="12" cy="7" r="4"></circle>
+                    </svg>
+                    Sign In
+                </a>
+                {% endif %}
+            </div>
+        </nav>
+
+        <div class="container">
+            {% block content %}{% endblock %}
+
+            <footer>
+                <div style="display: flex; justify-content: space-between; align-items: center;">
+                    <span style="font-size: 0.8rem; color: var(--muted);">© 2026 AdsRwanda.</span>
+                    <div style="display: flex; gap: 1.5rem;">
+                        <a href="#" class="nav-link">Terms</a>
+                        <a href="#" class="nav-link">Privacy</a>
+                    </div>
+                </div>
+            </footer>
+        </div>
+        <script>
+            // Auto-hide flash messages after 4 seconds
+            setTimeout(() => {
+                const container = document.getElementById('flash-container');
+                if (container) {
+                    container.style.transition = "opacity 0.5s ease";
+                    container.style.opacity = "0";
+                    setTimeout(() => container.remove(), 500);
+                }
+            }, 4000);
+        </script>
+    </body>
 
 </html>

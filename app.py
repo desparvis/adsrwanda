@@ -58,21 +58,38 @@ def register():
 
 @app.route('/login', methods=['POST'])
 def login():
-    phone = request.form.get('country_code') + request.form.get('phone')
-    password = request.form.get('password')
-    
-    user_record = User.query.filter_by(phone_number=phone).first()
-
-    if user_record and check_password_hash(user_record.password_hash, password):
-        session.permanent = True
-        session['user_id'] = user_record.id
-        session['user_type'] = user_record.user_type
+    try:
+        # Combine country code and phone number
+        country_code = request.form.get('country_code', '')
+        phone_input = request.form.get('phone', '')
+        phone = country_code + phone_input
         
-        if user_record.user_type == 'seller':
-            return redirect(url_for('dashboard'))
-        return redirect(url_for('index'))
-    
-    return "Invalid phone or password."
+        password = request.form.get('password')
+        
+        # Look up the user
+        user_record = User.query.filter_by(phone_number=phone).first()
+
+        # Verify password
+        if user_record and check_password_hash(user_record.password_hash, password):
+            session.permanent = True
+            session['user_id'] = user_record.id
+            session['user_type'] = user_record.user_type
+            
+            # Show a success pop-up
+            flash(f"Welcome back, {user_record.full_name}!", "success")
+            
+            if user_record.user_type == 'seller':
+                return redirect(url_for('dashboard'))
+            return redirect(url_for('index'))
+        
+        # If login fails, show an error pop-up and stay on the auth page
+        flash("Invalid phone number or password. Please try again.", "error")
+        return redirect(url_for('auth'))
+
+    except Exception as e:
+        # In case of database or connection issues
+        flash("An unexpected error occurred. Please try again later.", "error")
+        return redirect(url_for('auth'))
 
 @app.route('/dashboard')
 def dashboard():
@@ -99,7 +116,8 @@ def dashboard():
 @app.route('/logout')
 def logout():
     session.clear()
-    return redirect(url_for('index'))
+    flash("Logged out successfully!", "message")
+    return redirect(url_for('auth'))
 
 if __name__ == '__main__':
     app.run(debug=True)
