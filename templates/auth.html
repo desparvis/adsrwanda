@@ -1,0 +1,206 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Account | AdsRwanda</title>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+    <style>
+        :root { --black: #000000; --border: #e2e2e2; --muted: #888; --soft-bg: #f5f5f5; }
+        body { font-family: 'Inter', sans-serif; background: #fff; margin: 0; display: flex; justify-content: center; align-items: center; min-height: 100vh; }
+        
+        .auth-container { width: 100%; max-width: 400px; padding: 2rem; }
+        .brand-logo { display: block; text-align: center; font-weight: 800; font-size: 1.5rem; text-decoration: none; color: var(--black); margin-bottom: 2rem; letter-spacing: -1px; }
+        
+        /* Role Selector */
+        .role-selector {
+            display: flex;
+            background: var(--soft-bg);
+            padding: 4px;
+            border-radius: 6px;
+            margin-bottom: 1.5rem;
+        }
+        .role-option {
+            flex: 1;
+            text-align: center;
+            padding: 10px;
+            font-size: 0.8rem;
+            font-weight: 600;
+            cursor: pointer;
+            border-radius: 4px;
+            transition: 0.2s;
+            color: var(--muted);
+        }
+        .role-option.active {
+            background: #fff;
+            color: var(--black);
+            box-shadow: 0 2px 4px rgba(0,0,0,0.05);
+        }
+
+        /* Tabs */
+        .tabs { display: flex; border-bottom: 1px solid var(--border); margin-bottom: 2rem; }
+        .tab-btn { flex: 1; padding: 1rem; border: none; background: none; font-family: inherit; font-size: 0.85rem; font-weight: 600; color: var(--muted); cursor: pointer; outline: none; }
+        .tab-btn.active { color: var(--black); border-bottom: 2px solid var(--black); }
+
+        /* Form Layout */
+        .form-group { margin-bottom: 1.2rem; }
+        label { display: block; font-size: 0.7rem; font-weight: 700; text-transform: uppercase; letter-spacing: 1px; margin-bottom: 0.5rem; color: var(--muted); }
+        
+        .input-wrapper { display: flex; border: 1px solid var(--black); border-radius: 2px; overflow: hidden; position: relative; }
+        
+        .country-select { 
+            appearance: none; -webkit-appearance: none;
+            padding: 0.8rem; background: var(--soft-bg); border: none; 
+            border-right: 1px solid var(--black); font-size: 0.85rem; 
+            font-weight: 600; font-family: inherit; cursor: pointer;
+            outline: none;
+        }
+        
+        input { border: none; padding: 0.8rem; width: 100%; font-family: inherit; font-size: 1rem; outline: none; background: transparent; }
+        
+        .pass-toggle-btn {
+            border: none; background: none; padding: 0 12px;
+            cursor: pointer; color: var(--black); display: flex; align-items: center;
+        }
+        .pass-toggle-btn svg { width: 18px; height: 18px; stroke-width: 2.5px; }
+
+        .submit-btn { width: 100%; background: var(--black); color: white; border: none; padding: 1rem; font-family: inherit; font-weight: 600; font-size: 0.9rem; cursor: pointer; margin-top: 1rem; }
+        .submit-btn:hover { opacity: 0.9; }
+
+        .helper-text { text-align: center; margin-top: 1.5rem; font-size: 0.85rem; color: var(--muted); }
+        .helper-text a { color: var(--black); text-decoration: none; font-weight: 600; }
+    </style>
+</head>
+<body>
+
+<div class="auth-container">
+    <a href="/" class="brand-logo">ADSRWANDA.</a>
+
+    <div class="tabs">
+        <button class="tab-btn active" id="tab-login-btn" onclick="switchTab('login')">LOGIN</button>
+        <button class="tab-btn" id="tab-register-btn" onclick="switchTab('register')">REGISTER</button>
+    </div>
+
+    <!-- Login Form -->
+    <form id="login-form" action="/login" method="POST">
+        <div class="form-group">
+            <label>Phone Number (WhatsApp)</label>
+            <div class="input-wrapper">
+                <select class="country-select" name="country_code">
+                    <option value="+250">RW (+250)</option>
+                    <option value="+254">KE (+254)</option>
+                    <option value="+256">UG (+256)</option>
+                    <option value="+255">TZ (+255)</option>
+                    <option value="+1">US (+1)</option>
+                </select>
+                <input type="tel" name="phone" placeholder="788 000 000" required>
+            </div>
+        </div>
+
+        <div class="form-group">
+            <label>Password</label>
+            <div class="input-wrapper">
+                <input type="password" class="password-input" name="password" placeholder="••••••••" required>
+                <button type="button" class="pass-toggle-btn" onclick="togglePass(this)">
+                    <svg class="eye-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round">
+                        <path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"></path>
+                        <circle cx="12" cy="12" r="3"></circle>
+                    </svg>
+                </button>
+            </div>
+        </div>
+        <button type="submit" class="submit-btn">RESUME SESSION</button>
+        <p class="helper-text">Forgot password? <a href="#">Reset it here.</a></p>
+    </form>
+
+    <!-- Register Form -->
+    <form id="register-form" action="/register" method="POST" style="display: none;">
+        <div class="form-group">
+            <label>Account Type</label>
+            <div class="role-selector">
+                <div class="role-option active" id="role-buyer" onclick="setRole('buyer')">BUYER</div>
+                <div class="role-option" id="role-seller" onclick="setRole('seller')">SELLER</div>
+            </div>
+            <input type="hidden" name="user_type" id="user_type_input" value="buyer">
+        </div>
+
+        <div class="form-group">
+            <label>Full Name</label>
+            <div class="input-wrapper">
+                <input type="text" name="full_name" placeholder="Credo Desparvis" required>
+            </div>
+        </div>
+
+        <div class="form-group">
+            <label>Phone Number (WhatsApp)</label>
+            <div class="input-wrapper">
+                <select class="country-select" name="country_code">
+                    <option value="+250">RW (+250)</option>
+                    <option value="+254">KE (+254)</option>
+                    <option value="+256">UG (+256)</option>
+                    <option value="+255">TZ (+255)</option>
+                    <option value="+1">US (+1)</option>
+                </select>
+                <input type="tel" name="phone" placeholder="788 000 000" required>
+            </div>
+        </div>
+
+        <div class="form-group">
+            <label>Create Password</label>
+            <div class="input-wrapper">
+                <input type="password" class="password-input" name="password" placeholder="••••••••" required>
+                <button type="button" class="pass-toggle-btn" onclick="togglePass(this)">
+                    <svg class="eye-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round">
+                        <path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"></path>
+                        <circle cx="12" cy="12" r="3"></circle>
+                    </svg>
+                </button>
+            </div>
+        </div>
+
+        <button type="submit" class="submit-btn">CREATE ACCOUNT</button>
+        <p class="helper-text">By registering, you agree to our <a href="#">Terms</a>.</p>
+    </form>
+</div>
+
+<script>
+    function switchTab(mode) {
+        const loginForm = document.getElementById('login-form');
+        const registerForm = document.getElementById('register-form');
+        const loginBtn = document.getElementById('tab-login-btn');
+        const registerBtn = document.getElementById('tab-register-btn');
+
+        if (mode === 'login') {
+            loginForm.style.display = 'block';
+            registerForm.style.display = 'none';
+            loginBtn.classList.add('active');
+            registerBtn.classList.remove('active');
+        } else {
+            loginForm.style.display = 'none';
+            registerForm.style.display = 'block';
+            registerBtn.classList.add('active');
+            loginBtn.classList.remove('active');
+        }
+    }
+
+    function togglePass(btn) {
+        const input = btn.parentElement.querySelector('.password-input');
+        const icon = btn.querySelector('.eye-icon');
+        if (input.type === "password") {
+            input.type = "text";
+            icon.innerHTML = '<line x1="1" y1="1" x2="23" y2="23"></line><path d="M9 9a3 3 0 1 1 4.24 4.24"></path><path d="M17.41 17.41a10 10 0 0 1-13.41-1.41"></path><path d="M10.58 10.58a10 10 0 0 1 13.41 1.41"></path>';
+        } else {
+            input.type = "password";
+            icon.innerHTML = '<path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"></path><circle cx="12" cy="12" r="3"></circle>';
+        }
+    }
+
+    function setRole(role) {
+        document.getElementById('user_type_input').value = role;
+        document.getElementById('role-buyer').classList.toggle('active', role === 'buyer');
+        document.getElementById('role-seller').classList.toggle('active', role === 'seller');
+    }
+</script>
+
+</body>
+</html>

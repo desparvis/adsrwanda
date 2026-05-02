@@ -1,0 +1,194 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Seller Dashboard | AdsRwanda</title>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+    <style>
+        :root { --black: #000000; --border: #e2e2e2; --muted: #888; --soft-bg: #f9f9f9; }
+        
+        body { font-family: 'Inter', sans-serif; background: #fff; margin: 0; display: flex; height: 100vh; overflow: hidden; }
+
+        /* Sidebar */
+        aside {
+            width: 260px;
+            border-right: 1px solid var(--border);
+            padding: 2rem 1.5rem;
+            display: flex;
+            flex-direction: column;
+            gap: 2.5rem;
+        }
+
+        .brand { font-weight: 800; font-size: 1.2rem; text-decoration: none; color: var(--black); letter-spacing: -0.5px; }
+
+        .seller-profile {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            padding: 10px;
+            background: var(--soft-bg);
+            border-radius: 4px;
+        }
+        .avatar-circle {
+            width: 35px;
+            height: 35px;
+            background: var(--black);
+            color: white;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-weight: 700;
+            font-size: 0.8rem;
+        }
+        .profile-info span { display: block; font-size: 0.8rem; font-weight: 600; }
+        .profile-info small { color: var(--muted); font-size: 0.7rem; text-transform: uppercase; }
+
+        .nav-group { display: flex; flex-direction: column; gap: 0.4rem; }
+        .nav-item { 
+            text-decoration: none; color: var(--muted); font-size: 0.85rem; 
+            font-weight: 500; padding: 12px; border-radius: 4px; transition: 0.2s;
+        }
+        .nav-item.active { background: var(--black); color: white; font-weight: 600; }
+        .nav-item:hover:not(.active) { color: var(--black); background: var(--soft-bg); }
+
+        /* Main Content */
+        main { flex: 1; overflow-y: auto; padding: 3rem 5%; }
+
+        header { 
+            display: flex; justify-content: space-between; align-items: center; 
+            margin-bottom: 3rem;
+        }
+        header h1 { margin: 0; font-size: 1.6rem; font-weight: 700; letter-spacing: -0.5px; }
+
+        /* Stats Grid */
+        .stats-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 1.5rem; margin-bottom: 3rem; }
+        .stat-card { border: 1px solid var(--border); padding: 1.5rem; border-radius: 2px; }
+        .stat-label { font-size: 0.7rem; font-weight: 700; color: var(--muted); text-transform: uppercase; letter-spacing: 1px; }
+        .stat-value { font-size: 1.6rem; font-weight: 700; margin-top: 0.5rem; display: block; }
+
+        /* Table Styling */
+        .table-container { width: 100%; overflow-x: auto; }
+        table { width: 100%; border-collapse: collapse; }
+        th { text-align: left; font-size: 0.7rem; color: var(--muted); padding: 1rem; border-bottom: 1px solid var(--black); text-transform: uppercase; letter-spacing: 1px; }
+        td { padding: 1.2rem 1rem; border-bottom: 1px solid var(--border); font-size: 0.9rem; }
+        
+        .status-badge { 
+            font-size: 0.65rem; font-weight: 700; padding: 4px 8px; 
+            border-radius: 2px; text-transform: uppercase; border: 1px solid transparent;
+        }
+        .status-active { background: #e6fffa; color: #2c7a7b; border-color: #b2f5ea; }
+        .status-pending { background: #fffaf0; color: #9c4221; border-color: #feebc8; }
+
+        .btn-primary { 
+            background: var(--black); color: white; border: none; padding: 12px 20px; 
+            font-family: inherit; font-weight: 600; font-size: 0.85rem; cursor: pointer; text-decoration: none;
+            display: inline-flex; align-items: center; gap: 8px;
+        }
+
+        .action-link { color: var(--black); font-size: 0.8rem; font-weight: 700; text-decoration: none; border-bottom: 1px solid var(--black); }
+
+        @media (max-width: 900px) {
+            aside { display: none; }
+            .stats-grid { grid-template-columns: 1fr; }
+        }
+    </style>
+</head>
+<body>
+
+    <aside>
+        <a href="/" class="brand">ADSRWANDA.</a>
+        
+        <div class="seller-profile">
+            <div class="avatar-circle">
+                {{ user.name[:1] | upper if user.name else '?' }}
+            </div>
+            <div class="profile-info">
+                <span>{{ user.name }}</span>
+                <small>Verified Seller</small>
+            </div>
+        </div>
+
+        <div class="nav-group">
+            <a href="#" class="nav-item active">Overview</a>
+            <a href="#" class="nav-item">Active Listings</a>
+            <a href="#" class="nav-item">Inbox ({{ user.stats.messages }})</a>
+            <a href="#" class="nav-item">Account Settings</a>
+        </div>
+
+        <div class="nav-group" style="margin-top: auto;">
+            <a href="/logout" class="nav-item" style="color: #d9534f;">Sign Out</a>
+        </div>
+    </aside>
+
+    <main>
+        <header>
+            <h1>Dashboard</h1>
+            <a href="/post" class="btn-primary">
+                <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3"><line x1="12" y1="5" x2="12" y2="19"></line><line x1="5" y1="12" x2="19" y2="12"></line></svg>
+                Post New Listing
+            </a>
+        </header>
+
+        <div class="stats-grid">
+            <div class="stat-card">
+                <span class="stat-label">Total Ad Views</span>
+                <span class="stat-value">{{ user.stats.views }}</span>
+            </div>
+            <div class="stat-card">
+                <span class="stat-label">Live Listings</span>
+                <span class="stat-value">{{ user.stats.active_ads }}</span>
+            </div>
+            <div class="stat-card">
+                <span class="stat-label">Inquiries</span>
+                <span class="stat-value">{{ user.stats.messages }}</span>
+            </div>
+        </div>
+
+        <div style="margin-bottom: 1.5rem;">
+            <h2 style="font-size: 1rem; font-weight: 700; text-transform: uppercase; letter-spacing: 1px;">Recent Activity</h2>
+        </div>
+
+        <div class="table-container">
+            <table>
+                <thead>
+                    <tr>
+                        <th>Item Description</th>
+                        <th>Category</th>
+                        <th>Price (RWF)</th>
+                        <th>Status</th>
+                        <th>Control</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    {% for item in user.listings %}
+                    <tr>
+                        <td><strong>{{ item.title }}</strong></td>
+                        <td>{{ item.category }}</td>
+                        <td>{{ item.price }}</td>
+                        <td>
+                            {% if item.status == 'Active' %}
+                            <span class="status-badge status-active">Live</span>
+                            {% else %}
+                            <span class="status-badge status-pending">In Review</span>
+                            {% endif %}
+                        </td>
+                        <td>
+                            <a href="/edit/{{ item.id }}" class="action-link">Modify</a>
+                        </td>
+                    </tr>
+                    {% else %}
+                    <tr>
+                        <td colspan="5" style="text-align: center; color: var(--muted); padding: 3rem;">
+                            No listings found. Start selling to see activity here.
+                        </td>
+                    </tr>
+                    {% endfor %}
+                </tbody>
+            </table>
+        </div>
+    </main>
+
+</body>
+</html>

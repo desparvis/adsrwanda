@@ -1,0 +1,97 @@
+{% extends "base.html" %}
+
+{% block extra_css %}
+<style>
+    .hero { padding: 4rem 0 3rem 0; max-width: 700px; }
+    .hero h1 { font-size: 2.5rem; font-weight: 700; letter-spacing: -1px; margin-bottom: 1.5rem; }
+    .search-bar { width: 100%; padding: 1.2rem; border: 1px solid var(--black); font-size: 1rem; outline: none; }
+    
+    .section-title { display: flex; justify-content: space-between; align-items: flex-end; margin-top: 4rem; margin-bottom: 1.5rem; }
+    .section-title h2 { font-size: 0.75rem; text-transform: uppercase; letter-spacing: 2px; font-weight: 700; color: var(--muted); margin: 0; }
+    .section-title a { font-size: 0.8rem; text-decoration: none; color: var(--black); font-weight: 600; }
+
+    .grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 2rem; }
+    .card { text-decoration: none; color: inherit; display: block; }
+    .card-image { width: 100%; aspect-ratio: 16/10; background-color: var(--soft-grey); margin-bottom: 1rem; border: 1px solid var(--border); }
+    .card-content h3 { margin: 0; font-size: 1rem; font-weight: 500; }
+    .card-price { display: block; font-weight: 700; font-size: 1rem; margin-top: 0.2rem; }
+    .card-location { display: block; font-size: 0.75rem; color: var(--muted); margin-top: 0.4rem; text-transform: uppercase; letter-spacing: 0.5px; }
+
+    .empty-category { grid-column: span 3; padding: 2rem; text-align: center; border: 1px dashed var(--border); color: #bbbbbb; font-size: 0.85rem; }
+
+    @media (max-width: 900px) { .grid { grid-template-columns: 1fr; } }
+</style>
+{% endblock %}
+
+{% block content %}
+<header class="hero">
+    <h1>The premium marketplace for Rwanda's high-value assets.</h1>
+    <input type="text" class="search-bar" placeholder="Search by neighborhood, car model, or laptop brand...">
+</header>
+
+<!-- REAL ESTATE -->
+<div class="section-title">
+    <h2>Real Estate</h2>
+    <a href="/real-estate">Browse All &rarr;</a>
+</div>
+<div class="grid">
+    {% if categories.real_estate %}
+        {% for ad in categories.real_estate[:3] %}
+        <a href="/ad/{{ ad.id }}" class="card">
+            <div class="card-image"></div>
+            <div class="card-content">
+                <h3>{{ ad.title }}</h3>
+                <span class="card-price">{{ ad.price }} RWF</span>
+                <span class="card-location">{{ ad.location }}</span>
+            </div>
+        </a>
+        {% endfor %}
+    {% else %}
+        <div class="empty-category">No real estate listings available.</div>
+    {% endif %}
+</div>
+
+<!-- AUTOMOTIVE -->
+<div class="section-title">
+    <h2>Automotive</h2>
+    <a href="/automotive">Browse All &rarr;</a>
+</div>
+<div class="grid">
+    {% if categories.automotive %}
+        {% for ad in categories.automotive[:3] %}
+        <a href="/ad/{{ ad.id }}" class="card">
+            <div class="card-image"></div>
+            <div class="card-content">
+                <h3>{{ ad.title }}</h3>
+                <span class="card-price">{{ ad.price }} RWF</span>
+                <span class="card-location">{{ ad.location }}</span>
+            </div>
+        </a>
+        {% endfor %}
+    {% else %}
+        <div class="empty-category">No vehicles available.</div>
+    {% endif %}
+</div>
+
+<!-- ELECTRONICS -->
+<div class="section-title">
+    <h2>High-End Electronics</h2>
+    <a href="/electronics">Browse All &rarr;</a>
+</div>
+<div class="grid">
+    {% if categories.electronics %}
+        {% for ad in categories.electronics[:3] %}
+        <a href="/ad/{{ ad.id }}" class="card">
+            <div class="card-image"></div>
+            <div class="card-content">
+                <h3>{{ ad.title }}</h3>
+                <span class="card-price">{{ ad.price }} RWF</span>
+                <span class="card-location">{{ ad.location }}</span>
+            </div>
+        </a>
+        {% endfor %}
+    {% else %}
+        <div class="empty-category">No electronics available.</div>
+    {% endif %}
+</div>
+{% endblock %}

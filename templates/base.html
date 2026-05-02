@@ -1,0 +1,172 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>{% block title %}AdsRwanda | Professional Marketplace{% endblock %}</title>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <style>
+        :root {
+            --black: #000000;
+            --soft-grey: #f9f9f9;
+            --border: #eeeeee;
+            --muted: #888888;
+        }
+
+        body {
+            font-family: 'Inter', sans-serif;
+            margin: 0;
+            color: var(--black);
+            background-color: #fff;
+            -webkit-font-smoothing: antialiased;
+        }
+
+        .banner {
+            background: #000;
+            color: #fff;
+            padding: 0.8rem;
+            text-align: center;
+            font-size: 0.8rem;
+            font-weight: 500;
+        }
+
+        nav {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 1.5rem 6%;
+            border-bottom: 1px solid var(--border);
+            background: white;
+            position: sticky;
+            top: 0;
+            z-index: 1000;
+        }
+
+        .brand {
+            font-weight: 800;
+            font-size: 1.2rem;
+            text-decoration: none;
+            color: var(--black);
+            letter-spacing: -0.5px;
+        }
+
+        .nav-center {
+            display: flex;
+            gap: 2rem;
+        }
+
+        .nav-link {
+            text-decoration: none;
+            color: var(--muted);
+            font-size: 0.85rem;
+            font-weight: 500;
+            transition: 0.2s;
+        }
+
+        .nav-link:hover {
+            color: var(--black);
+        }
+
+        .nav-right {
+            display: flex;
+            align-items: center;
+            gap: 1.5rem;
+        }
+
+        .post-ad-btn {
+            background: var(--black);
+            color: white;
+            padding: 0.7rem 1.2rem;
+            border-radius: 2px;
+            text-decoration: none;
+            font-size: 0.85rem;
+            font-weight: 600;
+        }
+
+        .auth-link {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            text-decoration: none;
+            color: var(--black);
+            font-size: 0.85rem;
+            font-weight: 500;
+            padding-left: 1.5rem;
+            border-left: 1px solid var(--border);
+        }
+
+        .user-icon {
+            width: 18px;
+            height: 18px;
+            stroke-width: 2px;
+            stroke: currentColor;
+            fill: none;
+        }
+
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 0 6%;
+        }
+
+        footer {
+            margin: 6rem 0 3rem 0;
+            padding-top: 2rem;
+            border-top: 1px solid var(--border);
+        }
+
+        /* Fixed Jinja blocks here */
+    </style>
+    {% block extra_css %}{% endblock %}
+</head>
+
+<body>
+    <div class="banner">
+        Verified Listings: Now manually reviewing every Real Estate post for your safety.
+    </div>
+
+    <nav>
+        <a href="/" class="brand">ADSRWANDA.</a>
+
+        <div class="nav-center">
+            <a href="/real-estate" class="nav-link">Real Estate</a>
+            <a href="/automotive" class="nav-link">Automotive</a>
+            <a href="/electronics" class="nav-link">Electronics</a>
+            <!-- Added back as requested -->
+            <a href="/jobsntenders" class="nav-link">Jobs & Tenders</a>
+        </div>
+
+        <div class="nav-right">
+            <a href="/post" class="post-ad-btn">Submit Listing</a>
+            {% if session.get('user_id') %}
+            <a href="/dashboard" class="auth-link">Dashboard</a>
+            <a href="/logout" class="nav-link" style="font-size: 0.75rem; margin-left: 10px;">Sign Out</a>
+            {% else %}
+            <a href="/auth" class="auth-link">
+                <svg class="user-icon" viewBox="0 0 24 24">
+                    <path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"></path>
+                    <circle cx="12" cy="7" r="4"></circle>
+                </svg>
+                Sign In
+            </a>
+            {% endif %}
+        </div>
+    </nav>
+
+    <div class="container">
+        {% block content %}{% endblock %}
+
+        <footer>
+            <div style="display: flex; justify-content: space-between; align-items: center;">
+                <span style="font-size: 0.8rem; color: var(--muted);">© 2026 AdsRwanda.</span>
+                <div style="display: flex; gap: 1.5rem;">
+                    <a href="#" class="nav-link">Terms</a>
+                    <a href="#" class="nav-link">Privacy</a>
+                </div>
+            </div>
+        </footer>
+    </div>
+</body>
+
+</html>
